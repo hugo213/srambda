@@ -7,12 +7,22 @@ class Node:
     """base class for tree nodes"""
     def __init__(self, children):
         self.children = children
+        self.parent = None
+        for c in self.children:
+            c.parent = self
 
     def __str__(self):
         return self.__class__.__name__
 
     def pretty(self, spacing=0):
-        return '\n'.join([f'{spacing*" "}{str(self)}'] + [child.pretty(spacing+1) for child in self.children])
+        return '\n'.join([f'{spacing*"| "}{str(self)}'] + [child.pretty(spacing+1) for child in self.children])
+
+    def replace(self, new):  # dirty hack for assigning by reference
+        self.__class__ = new.__class__
+        for field in new.__dict__.keys():
+            v = getattr(new, field)
+            if v is not None:
+                setattr(self, field, v)
 
 
 class Abstraction(Node):
