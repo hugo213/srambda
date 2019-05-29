@@ -73,6 +73,34 @@ class Variable(Node):
         return super().__str__() + f'({self.up})'
 
 
+class DFS:
+    def __init__(self, tree: Node):
+        self.tree = tree
+
+    def go(self, **kwargs):
+        return self._dfs(self.tree, 0, **kwargs)
+
+    def variable(self, node: Variable, depth: int, **kwargs):
+        return node
+
+    def abstraction(self, node: Abstraction, depth: int, **kwargs):
+        return Abstraction([
+            self._dfs(node.children[0], depth + 1)])
+
+    def application(self, node: Application, depth: int, **kwargs):
+        return Application([
+            self._dfs(node.children[0], depth),
+            self._dfs(node.children[1], depth)])
+
+    def _dfs(self, node: Node, depth: int, **kwargs) -> Node:
+        if isinstance(node, Variable):
+            return self.variable(node, depth, **kwargs)
+        elif isinstance(node, Abstraction):
+            return self.abstraction(node, depth, **kwargs)
+        elif isinstance(node, Application):
+            return self.application(node, depth, **kwargs)
+
+
 def build_etree(lark_tree: lark.Tree) -> Node:
     """builds an expression tree from parse tree of evaluation"""
 
