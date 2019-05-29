@@ -16,4 +16,4 @@ for e in evaluations:
     print(e.pretty())
     etree = build_etree(e)
     tree2 = BasicReductor(etree).reduce()
-    print('RESULT', tree2.pretty())
+    print('RESULT', tree2.write())
